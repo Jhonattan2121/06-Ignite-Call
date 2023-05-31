@@ -8,11 +8,45 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  username String @unique
-  name     String
+  id         String   @id @default(uuid())
+  username   String   @unique
+  name       String
+  email      String?  @unique
+  image      String?
+  avatar_url DateTime @default(now())
 
-  created_at DateTime @default(now())
+  accounts Account[]
+  sessions Session[]
 
   @@map("users")
+}
+
+model Account {
+  id                  String  @id @default(cuid())
+  user_Id             String
+  type                String
+  provider            String
+  provider_Account_Id String
+  refresh_token       String?
+  access_token        String?
+  expires_at          Int?
+  token_type          String?
+  scope               String?
+  id_token            String?
+  session_state       String?
+
+  user User @relation(fields: [user_Id], references: [id], onDelete: Cascade)
+
+  @@unique([provider, provider_Account_Id])
+  @@map("accounts")
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  session_Token String   @unique
+  user_Id       String
+  expires       DateTime
+  user          User     @relation(fields: [user_Id], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
