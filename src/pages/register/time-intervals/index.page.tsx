@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { getWeekDays } from "@/utils/get-week-days";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { convertTimeStringToMinutes } from "@/utils/conver-time-string-to-minutes";
 
 const timeIntervalsFormSchema = z.object({
     intervals: z.array(z.object({
@@ -18,10 +19,27 @@ const timeIntervalsFormSchema = z.object({
     .transform((intervals) => intervals.filter((interval) => interval.enabled))
     .refine((intervals) => intervals.length > 0, {
         message: 'Você precisa selecionar pelo menos um dia da semana!'
-    }),
+    })
+    .transform((intervals) => {
+        return intervals.map((interval) => {
+            return {
+                weekDay: interval.weekDay,
+                startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
+                endTimeInMinutes: convertTimeStringToMinutes(interval.endTime), 
+            }
+        })
+    })
+    .refine((intervals) => {
+        return intervals.every(
+            (interval) => 
+            interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes, 
+        )
+    }, {
+        message: 'As horas de inicio e fim devem ser maior que 60 minutos!'
+        }),
 });
-
-type TimeIntervalsFormData = z.infer<typeof timeIntervalsFormSchema> 
+type TimeintervalsFormInput = z.input<typeof timeIntervalsFormSchema> 
+type TimeIntervalsFormOutput = z.output<typeof timeIntervalsFormSchema> 
 
 export default function TimeIntervals() {
     const {
@@ -30,16 +48,16 @@ export default function TimeIntervals() {
         control,
         watch,
         formState: { isSubmitting, errors,  },
-    } = useForm({
+    } = useForm<TimeintervalsFormInput>({
         resolver: zodResolver(timeIntervalsFormSchema),
         defaultValues: {
             intervals: [
                 { weekDay: 0, enabled: false, startTime: "08:00", endTime: "20:00" },
-                { weekDay: 1, enabled: false, startTime: "08:00", endTime: "20:00" },
-                { weekDay: 2, enabled: false, startTime: "08:00", endTime: "20:00" },
-                { weekDay: 3, enabled: false, startTime: "08:00", endTime: "20:00" },
-                { weekDay: 4, enabled: false, startTime: "08:00", endTime: "20:00" },
-                { weekDay: 5, enabled: false, startTime: "08:00", endTime: "20:00" },
+                { weekDay: 1, enabled: true, startTime: "08:00", endTime: "20:00" },
+                { weekDay: 2, enabled: true, startTime: "08:00", endTime: "20:00" },
+                { weekDay: 3, enabled: true, startTime: "08:00", endTime: "20:00" },
+                { weekDay: 4, enabled: true, startTime: "08:00", endTime: "20:00" },
+                { weekDay: 5, enabled: true, startTime: "08:00", endTime: "20:00" },
                 { weekDay: 6, enabled: false, startTime: "08:00", endTime: "20:00" },
             ],
         },
@@ -53,8 +71,10 @@ export default function TimeIntervals() {
     })
     const intervals = watch('intervals')
 
-    async function handleSetTimeIntervals(data: TimeIntervalsFormData) {
-        console.log(data)
+    async function handleSetTimeIntervals(data: any) {
+       const formData = data as TimeIntervalsFormOutput
+
+       console.log(formData)
     }
 
    
