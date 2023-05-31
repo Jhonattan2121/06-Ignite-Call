@@ -1,4 +1,4 @@
-import { Button, Heading, MultiStep, Text, TextArea } from "@ignite-ui/react";
+import { Avatar, Button, Heading, MultiStep, Text, TextArea } from "@ignite-ui/react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormAnnotation, ProfileBox } from "./styles";
@@ -9,11 +9,14 @@ import { useSession } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { buildNextAuthOptions } from "@/pages/api/auth/[...nextauth].api";
+import { api } from "@/libs/axios";
+import { useRouter } from "next/router";
 
 
 const updateProfileSchema = z.object({
-    bio: z.string(),
-})
+    bio: z.string().optional(), 
+  });
+  
 
 type UpdateProfileData = z.infer<typeof updateProfileSchema>
 
@@ -26,11 +29,17 @@ export default function UpdateProfile() {
     })
 
     const session = useSession()
-    console.log(session)
+    const router = useRouter()
+
  
     async function handleUpdateProfile(data: UpdateProfileData) {
-        
-    }
+        await api.put('/users/profile', {
+          bio: data.bio, 
+        })
+
+        await router.push(`/schedule/${session.data?.user.username}`)
+      }
+      
     return (
         <Container>
             <Header>
@@ -44,6 +53,9 @@ export default function UpdateProfile() {
                 <ProfileBox as="form" onSubmit={handleSubmit(handleUpdateProfile)}>
                     <label>
                        <Text size="sm">Foto de perfil</Text>
+                       <Avatar src={session.data?.user.avatar_url} referrerPolicy="no-referrer" alt={session.data?.user.name} />
+
+
                     </label>
 
                     <label>
