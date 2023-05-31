@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,25 +11,24 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  username   String   @unique
+  id         String    @id @default(uuid())
+  username   String    @unique
   name       String
-  email      String?  @unique
-  image      String?
-  avatar_url DateTime @default(now())
-
-  accounts Account[]
-  sessions Session[]
+  email      String?   @unique
+  avatar_url String?
+  created_at DateTime  @default(now())
+  Account    Account[]
+  Session    Session[]
 
   @@map("users")
 }
 
 model Account {
   id                  String  @id @default(cuid())
-  user_Id             String
+  user_id             String  @map("user_id")
   type                String
   provider            String
-  provider_Account_Id String
+  provider_account_id String  @map("provider_account_id")
   refresh_token       String?
   access_token        String?
   expires_at          Int?
@@ -35,18 +37,18 @@ model Account {
   id_token            String?
   session_state       String?
 
-  user User @relation(fields: [user_Id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@unique([provider, provider_Account_Id])
+  @@unique([provider, provider_account_id])
   @@map("accounts")
 }
 
 model Session {
   id            String   @id @default(cuid())
-  session_Token String   @unique
-  user_Id       String
+  session_token String   @unique @map("session_token")
+  user_id       String   @map("user_id")
   expires       DateTime
-  user          User     @relation(fields: [user_Id], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
