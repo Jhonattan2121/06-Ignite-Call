@@ -1,7 +1,7 @@
 import { CaretLeft, CaretRight } from "phosphor-react";
 import { CalendarActions, CalendarBody, CalendarContainer, CalendarDay, CalendarHeader, CalendarTitle } from "./styles";
 import { getWeekDays } from "@/utils/get-week-days";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import dayjs from "dayjs";
 
 export function Calendar() {
@@ -25,6 +25,25 @@ export function Calendar() {
 
     const currentMonth = currentDate.format('MMMM')
     const currentYear = currentDate.format('YYYY')
+
+    const calendarWeeks = useMemo(() => {
+        const daysInMonthArray = Array.from({
+            length: currentDate.daysInMonth(),
+        }).map((_, i) => {
+            return currentDate.set('date', i + 1)
+        })
+
+        const firstWeekday = currentDate.get('day')
+        const PreviousMonthFillArray = Array.from({
+            length: firstWeekday,
+        }).map((_, i) => {
+            return currentDate.subtract(i + 1, 'day')
+        }).reverse()
+
+        return [...PreviousMonthFillArray, ...daysInMonthArray]
+        }, [currentDate])
+
+            console.log(calendarWeeks)
     return (
         <CalendarContainer>
             <CalendarHeader>
