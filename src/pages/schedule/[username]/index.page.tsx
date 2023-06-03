@@ -2,6 +2,7 @@ import { Avatar, Heading, Text } from "@ignite-ui/react";
 import { Container, UserHeader } from "./styles";
 import { GetStaticProps, GetStaticPaths } from "next";
 import prisma from "@/libs/prisma";
+import { ScheduleForm } from "./ScheduleForm";
 
 interface ScheduleProps {
   user: {
@@ -20,6 +21,7 @@ export default function Schedule({ user }: ScheduleProps) {
         <Heading>{name}</Heading>
         <Text>{bio}</Text>
       </UserHeader>
+      <ScheduleForm />
     </Container>
   );
 }
