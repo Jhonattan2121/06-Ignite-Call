@@ -18,7 +18,6 @@ export function CalendarStep() {
   const describedDate = selectedDate
     ? dayjs(selectedDate).format('DD[ de ]MMMM')
     : null
-  
 
   return (
     <Container isTimePickerOpen={isDateSelected}>
