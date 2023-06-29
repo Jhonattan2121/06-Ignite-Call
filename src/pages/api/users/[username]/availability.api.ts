@@ -7,7 +7,7 @@ export default async function handle(
   res: NextApiResponse,
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).send
+    return res.status(405).end()
   }
 
   const username = String(req.query.username)
@@ -24,7 +24,7 @@ export default async function handle(
   })
 
   if (!user) {
-    return res.status(404).json({ message: 'User does not exist' })
+    return res.status(400).json({ message: 'User does not exist' })
   }
 
   const referenceDate = dayjs(String(date))
@@ -53,11 +53,35 @@ export default async function handle(
 
   //   [10, 11, 12, 13, 14, 15, 16, 17]
 
+  // ...
+
   const possibleTimes = Array.from({ length: endHour - startHour }).map(
     (_, i) => {
       return startHour + i
     },
   )
 
-  return res.json({ possibleTimes })
+  const blockedTimes = await prisma.scheduling.findMany({
+    select: {
+      Date: true,
+    },
+    where: {
+      user_id: user.id,
+      Date: {
+        gte: referenceDate.set('hour', startHour).toDate(),
+        lte: referenceDate.set('hour', endHour).toDate(),
+      },
+    },
+  })
+
+  const availableTimes = possibleTimes.filter((time) => {
+    return !blockedTimes.some(
+      (blockedTimes) => blockedTimes.Date.getHours() === time,
+    )
+  })
+
+  return res.json({
+    possibleTimes,
+    availableTimes,
+  })
 }

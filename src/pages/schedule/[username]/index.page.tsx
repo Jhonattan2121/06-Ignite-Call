@@ -13,6 +13,10 @@ interface ScheduleProps {
 }
 
 export default function Schedule({ user }: ScheduleProps) {
+  if (!user) {
+    return <div>Usuário não encontrado</div>
+  }
+
   const { name, bio, avatarUrl } = user
   return (
     <Container>
