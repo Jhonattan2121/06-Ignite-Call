@@ -216,10 +216,10 @@ export default function PrismaAdapter(
       }
     },
 
-    async deleteSession(sessionTokne) {
+    async deleteSession(sessionToken) {
       await prisma.session.delete({
         where: {
-          session_token: sessionTokne,
+          session_token: sessionToken,
         },
       })
     },

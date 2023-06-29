@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "shcedulings" (
+CREATE TABLE "schedulings" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "Date" DATETIME NOT NULL,
     "name" TEXT NOT NULL,
@@ -7,5 +7,5 @@ CREATE TABLE "shcedulings" (
     "observations" TEXT,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_id" TEXT NOT NULL,
-    CONSTRAINT "shcedulings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "schedulings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
