@@ -12,7 +12,7 @@ export const UserHeader = styled('div', {
   alignItems: 'center',
 
   [`> ${Heading}`]: {
-    lineHeight: '$base',
+    lineHeight: '$short',
     marginTop: '$2',
   },
   [`> ${Text}`]: {
