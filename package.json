@@ -26,6 +26,7 @@
     "nookies": "^2.5.2",
     "phosphor-react": "^1.4.1",
     "react": "18.2.0",
+    "react-devtools": "^4.27.8",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.44.2",
     "typescript": "5.0.4",
